@@ -2,6 +2,8 @@ package fi.utu.tech.telephonegame.network;
 
 import java.io.IOException;
 import java.io.Serializable;
+import java.net.ServerSocket;
+import java.net.Socket;
 import java.net.UnknownHostException;
 
 /**
@@ -35,7 +37,7 @@ public class NetworkService extends Thread implements Network {
 	 */
 	public void startListening(int serverPort) {
 		System.out.printf("I should start listening for new peers at TCP port %d%n", serverPort);
-		// TODO
+		new Thread(new NetworkServiceListener(serverPort)).start();
 	}
 
 	/**
