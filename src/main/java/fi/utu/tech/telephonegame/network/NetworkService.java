@@ -51,8 +51,11 @@ public class NetworkService extends Thread implements Network {
 	 */
 	public void connect(String peerIP, int peerPort) throws IOException, UnknownHostException {
 		System.out.printf("I should connect myself to %s, TCP port %d%n", peerIP, peerPort);
-		// TODO
-	}
+		try(Socket s = new Socket(peerIP, peerPort)){
+			System.out.println("Connection established!");
+		}
+
+    }
 
 	/**
 	 * This method is used to send the message to all connected neighbours (directly connected nodes)
