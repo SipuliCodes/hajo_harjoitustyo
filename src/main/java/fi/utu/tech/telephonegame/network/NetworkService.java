@@ -5,6 +5,8 @@ import java.io.Serializable;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.UnknownHostException;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.LinkedBlockingQueue;
 
 /**
  * A concrete implementation of Network interface.
@@ -19,6 +21,8 @@ import java.net.UnknownHostException;
  */
 public class NetworkService extends Thread implements Network {
 
+	private final BlockingQueue<Serializable> sendQueue = new LinkedBlockingQueue<>();
+	private final BlockingQueue<Serializable> receiveQueue = new LinkedBlockingQueue<>();
 	/*
 	 * No need to change the construtor
 	 */
@@ -79,7 +83,13 @@ public class NetworkService extends Thread implements Network {
 	 * @param out The Serializable object to be sent
 	 */
 	public void postMessage(Serializable out) {
-		//TODO
+		try {
+			sendQueue.put(out);
+			System.out.printf("Message added to send queue: %s%n", out);
+		} catch (InterruptedException e) {
+			System.err.println("Failed to add message to send queue.");
+			Thread.currentThread().interrupt();
+		}
 	}
 
 	/**
@@ -92,8 +102,15 @@ public class NetworkService extends Thread implements Network {
 	 * @return The next message
 	 */
 	public Object retrieveMessage() throws InterruptedException {
-		//TODO
-		return null;
+		try {
+			Object message = receiveQueue.take();
+			System.out.printf("Message retrieved from receive queue: %s%n", message);
+			return message;
+		} catch (InterruptedException e) {
+			System.err.println("Failed to retrieve message from receive queue.");
+			Thread.currentThread().interrupt();
+			throw e;
+		}
 	}
 
 	/**
