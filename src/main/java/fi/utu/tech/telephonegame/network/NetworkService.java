@@ -1,5 +1,7 @@
 package fi.utu.tech.telephonegame.network;
 
+import fi.utu.tech.telephonegame.Message;
+
 import java.io.IOException;
 import java.io.Serializable;
 import java.net.ServerSocket;
@@ -66,7 +68,7 @@ public class NetworkService extends Thread implements Network {
 	public void connect(String peerIP, int peerPort) throws IOException, UnknownHostException {
 		System.out.printf("I should connect myself to %s, TCP port %d%n", peerIP, peerPort);
 		try(Socket s = new Socket(peerIP, peerPort)){
-			NetworkServiceCommunicationHandler nsch = new NetworkServiceCommunicationHandler(s);
+			NetworkServiceCommunicationHandler nsch = new NetworkServiceCommunicationHandler(s, this);
 			this.addToCommunicationHandlers(nsch);
 		}
 
@@ -102,6 +104,22 @@ public class NetworkService extends Thread implements Network {
 			Thread.currentThread().interrupt();
 		}
 	}
+
+	/**
+	 * Add received message to the receiveQueue
+	 *
+	 * Is used in NetworkServiceCommunicationHandler to add the received messages to
+	 * NetworkService receive queue
+	 *
+	 * @param message The message to add to the queue
+	 */
+	public void addReceivedMessage(Message message) {
+        try {
+            receiveQueue.put(message);
+        } catch (InterruptedException e) {
+			System.out.println("Received message was not added to receive Queue");
+        }
+    }
 
 	/**
 	 * Read the next message from the queue of received messages.

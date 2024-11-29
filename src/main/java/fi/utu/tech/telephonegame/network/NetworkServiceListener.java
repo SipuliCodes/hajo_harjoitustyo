@@ -30,7 +30,7 @@ public class NetworkServiceListener implements Runnable{
         try(ServerSocket socket = new ServerSocket(serverPort)){
             while(true) {
                 Socket s = socket.accept();
-                NetworkServiceCommunicationHandler nsch = new NetworkServiceCommunicationHandler(s);
+                NetworkServiceCommunicationHandler nsch = new NetworkServiceCommunicationHandler(s, this.networkService);
                 networkService.addToCommunicationHandlers(nsch);
             }
         } catch (IOException e) {

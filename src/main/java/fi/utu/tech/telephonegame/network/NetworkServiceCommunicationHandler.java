@@ -15,11 +15,13 @@ import java.util.concurrent.LinkedBlockingQueue;
  */
 public class NetworkServiceCommunicationHandler implements Runnable {
     private final Socket socket;
+    private final NetworkService networkService;
 
     private final BlockingQueue<Serializable> messageQueue = new LinkedBlockingQueue<>();
 
-    public NetworkServiceCommunicationHandler(Socket socket) {
+    public NetworkServiceCommunicationHandler(Socket socket, NetworkService networkService) {
         this.socket = socket;
+        this.networkService = networkService;
     }
 
     /**
@@ -47,7 +49,7 @@ public class NetworkServiceCommunicationHandler implements Runnable {
                 while( (obj = ois.readObject()) != null){
                     if (obj instanceof Message) {
                         Message receivedMessage = (Message) obj;
-                        System.out.println(receivedMessage);
+                        networkService.addReceivedMessage(receivedMessage);
                     } else {
                         System.out.println("Received object is not of expected type.");
                     }
