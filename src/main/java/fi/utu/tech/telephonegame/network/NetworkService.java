@@ -66,7 +66,8 @@ public class NetworkService extends Thread implements Network {
 	public void connect(String peerIP, int peerPort) throws IOException, UnknownHostException {
 		System.out.printf("I should connect myself to %s, TCP port %d%n", peerIP, peerPort);
 		try(Socket s = new Socket(peerIP, peerPort)){
-			System.out.println("Connection established!");
+			NetworkServiceCommunicationHandler nsch = new NetworkServiceCommunicationHandler(s);
+			this.addToCommunicationHandlers(nsch);
 		}
 
     }
