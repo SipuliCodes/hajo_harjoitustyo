@@ -5,6 +5,7 @@ import java.io.Serializable;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.UnknownHostException;
+import java.util.ArrayList;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 
@@ -20,7 +21,7 @@ import java.util.concurrent.LinkedBlockingQueue;
  * to be able to implement all the required functionality
  */
 public class NetworkService extends Thread implements Network {
-
+	private final ArrayList<NetworkServiceCommunicationHandler> communicationHandlers = new ArrayList<>();
 	private final BlockingQueue<Serializable> sendQueue = new LinkedBlockingQueue<>();
 	private final BlockingQueue<Serializable> receiveQueue = new LinkedBlockingQueue<>();
 	/*
@@ -28,6 +29,15 @@ public class NetworkService extends Thread implements Network {
 	 */
 	public NetworkService() {
 		this.start();
+	}
+
+	/**
+	 * Adds NetworkServiceCommunicationHandler to communicationHandlers list
+	 *
+	 * @param nsch The communication handler to add
+	 */
+	public void addToCommunicationHandlers(NetworkServiceCommunicationHandler nsch) {
+		communicationHandlers.add(nsch);
 	}
 
 	/**
@@ -41,7 +51,7 @@ public class NetworkService extends Thread implements Network {
 	 */
 	public void startListening(int serverPort) {
 		System.out.printf("I should start listening for new peers at TCP port %d%n", serverPort);
-		new Thread(new NetworkServiceListener(serverPort)).start();
+		new Thread(new NetworkServiceListener(serverPort, this)).start();
 	}
 
 	/**

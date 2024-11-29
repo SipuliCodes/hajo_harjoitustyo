@@ -12,9 +12,11 @@ import java.net.Socket;
  */
 public class NetworkServiceListener implements Runnable{
     private final int serverPort;
+    private final NetworkService networkService;
 
-    public NetworkServiceListener(int serverPort) {
+    public NetworkServiceListener(int serverPort, NetworkService networkService) {
         this.serverPort = serverPort;
+        this.networkService = networkService;
     }
 
     /**
@@ -28,7 +30,8 @@ public class NetworkServiceListener implements Runnable{
         try(ServerSocket socket = new ServerSocket(serverPort)){
             while(true) {
                 Socket s = socket.accept();
-                System.out.println("Connection established!");
+                NetworkServiceCommunicationHandler nsch = new NetworkServiceCommunicationHandler(s);
+                networkService.addToCommunicationHandlers(nsch);
             }
         } catch (IOException e) {
             e.printStackTrace();
