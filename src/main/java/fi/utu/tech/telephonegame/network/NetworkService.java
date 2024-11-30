@@ -71,6 +71,10 @@ public class NetworkService extends Thread implements Network {
 			NetworkServiceCommunicationHandler nsch = new NetworkServiceCommunicationHandler(s, this);
 			this.addToCommunicationHandlers(nsch);
 		}
+        Socket s = new Socket(peerIP, peerPort);
+        NetworkServiceCommunicationHandler nsch = new NetworkServiceCommunicationHandler(s, this);
+        new Thread(nsch).start();
+        this.addToCommunicationHandlers(nsch);
 
     }
 

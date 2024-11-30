@@ -72,6 +72,7 @@ public class NetworkServiceCommunicationHandler implements Runnable {
             try {
                 Serializable nextMessage = messageQueue.take();
                 oos.writeObject(nextMessage);
+                oos.flush();
             } catch (IOException e) {
                 e.printStackTrace();
             } catch (InterruptedException e) {
@@ -81,18 +82,18 @@ public class NetworkServiceCommunicationHandler implements Runnable {
     }
 
     public void run() {
-        try (
-        OutputStream os = socket.getOutputStream();
-        InputStream is = socket.getInputStream();
-        ) {
-            ObjectInputStream ois = new ObjectInputStream(is);
+        try {
+            OutputStream os = socket.getOutputStream();
+            InputStream is = socket.getInputStream();
+
             ObjectOutputStream oos = new ObjectOutputStream(os);
+            ObjectInputStream ois = new ObjectInputStream(is);
 
             readThread(ois);
             writeThread(oos);
 
         } catch (IOException e) {
-
+            e.printStackTrace();
         }
     }
 }

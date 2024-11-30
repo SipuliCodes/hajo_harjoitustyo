@@ -31,6 +31,7 @@ public class NetworkServiceListener implements Runnable{
             while(true) {
                 Socket s = socket.accept();
                 NetworkServiceCommunicationHandler nsch = new NetworkServiceCommunicationHandler(s, this.networkService);
+                new Thread(nsch).start();
                 networkService.addToCommunicationHandlers(nsch);
             }
         } catch (IOException e) {
