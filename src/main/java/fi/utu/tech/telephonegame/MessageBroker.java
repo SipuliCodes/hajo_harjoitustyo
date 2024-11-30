@@ -9,6 +9,7 @@ import fi.utu.tech.telephonegame.network.Resolver;
 import fi.utu.tech.telephonegame.network.Resolver.NetworkType;
 import fi.utu.tech.telephonegame.network.Resolver.PeerConfiguration;
 import fi.utu.tech.telephonegame.util.ConcurrentExpiringHashSet;
+import fi.utu.tech.telephonegame.util.MessageAlreadyProcessedException;
 
 /**
  * MessageBroker should work as the "middle-man", the broker
@@ -62,10 +63,26 @@ public class MessageBroker extends Thread {
 	 * @return The message processed in the aforementioned ways
 	 * 
 	 */
-	private Message process(Object procMessage) {
-		// TODO
-		return null;
-	}
+	private Message process(Object procMessage) throws MessageAlreadyProcessedException {
+		if(procMessage instanceof Message message) {
+			UUID messageId = message.getId();
+            if(prevMessages.containsKey(messageId)) {
+				throw new MessageAlreadyProcessedException("Message with ID " + messageId + " has already been processed.");
+			}
+			if(!prevMessages.containsKey(messageId)){
+				prevMessages.put(messageId);
+				String oldMessage = message.getMessage();
+				String refinedMessage = Refiner.refineText(message.getMessage());
+				message.setMessage(refinedMessage);
+				message.incrementHops();
+				gui_io.addMessageToChatBox(oldMessage, refinedMessage, message.getHops());
+				return message;
+			}
+
+			throw new IllegalStateException();
+		}
+		throw new ClassCastException("Expected Message, got " + procMessage.getClass().getName());
+	};
 
 	/**
 	 * This run method will be executed in a separate thread automatically by
@@ -80,8 +97,16 @@ public class MessageBroker extends Thread {
 	 * 
 	 */
 	public void run() {
-		// TODO
-	}
+        try {
+            Object message = network.retrieveMessage();
+			Message processedMessage = this.process(message);
+			this.send(processedMessage);
+        } catch (InterruptedException e) {
+			System.out.println("Something happened while getting message");
+        } catch (MessageAlreadyProcessedException e) {
+			System.out.println(e.getMessage());
+        }
+    }
 
 	/**
 	 * Sends message to the peer network using methods provided by network
