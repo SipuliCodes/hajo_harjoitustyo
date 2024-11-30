@@ -81,8 +81,9 @@ public class NetworkService extends Thread implements Network {
 	 * 
 	 */
 	private void sendToNeighbours(Serializable out) {
-		// Send the object to all neighbouring nodes
-		// TODO
+		for(NetworkServiceCommunicationHandler handler : communicationHandlers) {
+			handler.sendMessage(out);
+		}
 	}
 	
 	/**
@@ -153,17 +154,13 @@ public class NetworkService extends Thread implements Network {
 	 * 
 	 */
 	public void run() {
-		// TODO
-		/*
 		while (true) {
 			try {
-				// We do not have structure (yet) where messages being sent are spooled
-				sendToNeighbours(???);
+				sendToNeighbours(sendQueue.take());
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}
 		}
-		*/
 	}
 
 }
