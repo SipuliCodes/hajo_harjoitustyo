@@ -25,6 +25,20 @@ public class NetworkServiceCommunicationHandler implements Runnable {
     }
 
     /**
+     * Method to close socket
+     *
+     * Used when program closes to clean up
+     */
+    public void stop() {
+        try {
+            socket.close();
+            System.out.println("Socket closed for handler: " + socket);
+        } catch (IOException e) {
+            System.err.println("Failed to close socket: " + e.getMessage());
+        }
+    }
+
+    /**
      * Method for NetworkService to add messages to queue for sending
      *
      * @param message message to add to messageQueue

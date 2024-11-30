@@ -30,7 +30,24 @@ public class NetworkService extends Thread implements Network {
 	 * No need to change the construtor
 	 */
 	public NetworkService() {
+		Runtime.getRuntime().addShutdownHook(new Thread(() -> {
+			System.out.println("Shutting down...");
+			closeAllHandlers();
+		}));
 		this.start();
+	}
+
+	/**
+	 * Closes socket in all communication handlers
+	 *
+	 * Loops through all communication handlers to close the sockets for clean up
+	 *
+	 */
+	public synchronized void closeAllHandlers() {
+		for (NetworkServiceCommunicationHandler handler : communicationHandlers) {
+			handler.stop();
+		}
+		communicationHandlers.clear();
 	}
 
 	/**
