@@ -91,16 +91,7 @@ public class MessageBroker extends Thread {
 	 * @param message The Message object to be sent
 	 */
 	public void send(Message message) {
-		// TODO
-		/*
-		 * Currently sending null to suppress errors
-		 * but obviously this has to change.
-		 * For some reason we cannot (yet) post Message objects...
-		 * Maybe take a look into the Message class and see if you
-		 * need to make it implement something to make postMessage
-		 * satisfied. Do not change the Network interface though.
-		 */
-		network.postMessage(null);
+		network.postMessage(message);
 	}
 
 	/**
