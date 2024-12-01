@@ -109,8 +109,6 @@ public class MessageBroker extends Thread {
 			}
         } catch (InterruptedException e) {
 			System.out.println("Something happened while getting message");
-        } catch (MessageAlreadyProcessedException e) {
-			System.out.println(e.getMessage());
         }
     }
 
