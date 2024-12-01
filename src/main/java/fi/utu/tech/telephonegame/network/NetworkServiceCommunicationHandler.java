@@ -84,9 +84,11 @@ public class NetworkServiceCommunicationHandler implements Runnable {
     private void writeThread(ObjectOutputStream oos) {
         new Thread(() -> {
             try {
-                Serializable nextMessage = messageQueue.take();
-                oos.writeObject(nextMessage);
-                oos.flush();
+                while(true) {
+                    Serializable nextMessage = messageQueue.take();
+                    oos.writeObject(nextMessage);
+                    oos.flush();
+                }
             } catch (IOException e) {
                 e.printStackTrace();
             } catch (InterruptedException e) {
