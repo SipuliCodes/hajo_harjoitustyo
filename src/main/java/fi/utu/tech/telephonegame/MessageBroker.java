@@ -131,6 +131,7 @@ public class MessageBroker extends Thread {
 	 */
 	public void send(String text) {
 		Message message = new Message(text, 0);
+		prevMessages.put(message.getId());
 		this.send(message);
 	}
 
