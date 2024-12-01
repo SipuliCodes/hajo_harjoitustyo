@@ -98,9 +98,15 @@ public class MessageBroker extends Thread {
 	 */
 	public void run() {
         try {
-            Object message = network.retrieveMessage();
-			Message processedMessage = this.process(message);
-			this.send(processedMessage);
+			while(true) {
+				Object message = network.retrieveMessage();
+				try {
+					Message processedMessage = this.process(message);
+					this.send(processedMessage);
+				} catch (MessageAlreadyProcessedException e) {
+					System.out.println(e.getMessage());
+				}
+			}
         } catch (InterruptedException e) {
 			System.out.println("Something happened while getting message");
         } catch (MessageAlreadyProcessedException e) {
